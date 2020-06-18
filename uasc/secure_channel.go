@@ -1,3 +1,7 @@
+// Copyright 2018-2020 opcua authors. All rights reserved.
+// Use of this source code is governed by a MIT-style license that can be
+// found in the LICENSE file.
+
 package uasc
 
 import (
@@ -169,6 +173,7 @@ func (s *SecureChannel) dispatcher() {
 			case ch <- resp:
 			default:
 				// this should never happen since the chan is of size one
+				debug.Printf("unexpected state. channel write should always succeed.")
 			}
 		}
 	}
@@ -281,7 +286,7 @@ func (s *SecureChannel) receive(ctx context.Context) *response {
 func (s *SecureChannel) readChunk() (*MessageChunk, error) {
 	// read a full message from the underlying conn.
 	b, err := s.c.Receive()
-	if err == io.EOF || len(b) == 0 { // || s.hasState(secureChannelClosed) {
+	if err == io.EOF || len(b) == 0 {
 		return nil, io.EOF
 	}
 
